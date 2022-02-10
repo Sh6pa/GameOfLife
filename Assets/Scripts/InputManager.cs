@@ -37,7 +37,10 @@ public class InputManager : MonoBehaviour
             Camera mainCamera = Camera.main;
             Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(pos);
             // Mathf.Clamp();
-
+            var col = (int)mouseWorldPosition.x;
+            var row = Mathf.FloorToInt(mouseWorldPosition.y);
+            //if (col >= 0 && col < GridManager.Instance)
+            // continuer ici
 
 
         }
