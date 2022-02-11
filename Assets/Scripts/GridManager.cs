@@ -52,8 +52,15 @@ public class GridManager : MonoBehaviour
         GenerateGrid();
     }
 
-    private void GenerateGrid()
+    public void GenerateGrid()
     {
+        if(m_grid != null)
+        {
+            foreach(var cell in m_grid)
+            {
+                Destroy(cell.gameObject);
+            }
+        }
         m_grid = new Cell[m_numCol, m_numRow];
         for (int row = 0; row < m_numRow; row++)
         {
@@ -75,16 +82,14 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
-    private void Start()
+    public void ChangeRows(float rows)
     {
-        
+        m_numRow = (int) rows;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ChangeCols(float cols)
     {
-        
+        m_numCol = (int)cols;
     }
 
     #region Private
