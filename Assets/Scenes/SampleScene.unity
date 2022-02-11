@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311926, g: 0.38073996, b: 0.35872698, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -152,8 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95afdaf90d399574589c288c5122a526, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _numCol: 10
-  _numRow: 10
+  m_numCol: 10
+  m_numRow: 10
   _cellPrefab: {fileID: 290175786719468517, guid: a0bb9023eab785849ac26cb4b8f68942, type: 3}
 --- !u!4 &517768384
 Transform:
@@ -282,6 +282,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gridManager: {fileID: 517768383}
+  _deadMaterial: {fileID: 2100000, guid: 73a4bf61ffcc68f4096e3ff3cf39cab7, type: 2}
+  _aliveMaterial: {fileID: 2100000, guid: 9647abb151341ac4e91d3a4c66f3c5f1, type: 2}
 --- !u!4 &1986789447
 Transform:
   m_ObjectHideFlags: 0

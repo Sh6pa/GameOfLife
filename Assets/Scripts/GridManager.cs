@@ -9,7 +9,15 @@ public class GridManager : MonoBehaviour
     
     #region Public
 
-    public GameObject[,] m_grid;
+    public Cell[,] m_grid;
+    
+    [SerializeField] // inspector modification
+    [Range(1, 100)]
+    public int m_numCol = 10;
+
+    [SerializeField]
+    [Range(1, 100)]
+    public int m_numRow = 10;
 
     #endregion
 
@@ -33,13 +41,7 @@ public class GridManager : MonoBehaviour
 
     #region Show in inspector
 
-    [SerializeField] // inspector modification
-    [Range(1, 100)]
-    private int _numCol = 10;
-
-    [SerializeField]
-    [Range(1, 100)]
-    private int _numRow = 10;
+    
 
     [SerializeField]
     private GameObject _cellPrefab;
@@ -52,22 +54,22 @@ public class GridManager : MonoBehaviour
 
     private void GenerateGrid()
     {
-        m_grid = new GameObject[_numCol, _numRow];
-        for (int row = 0; row < _numRow; row++)
+        m_grid = new Cell[m_numCol, m_numRow];
+        for (int row = 0; row < m_numRow; row++)
         {
-            for (int col = 0; col < _numCol; col++)
+            for (int col = 0; col < m_numCol; col++)
             {
                 Vector3Int pos = new Vector3Int(col, row, 0);
-                
+
                 // useless
                 //var go = new GameObject();
                 //go.name = $"{col},{row}";
                 //var mf = go.AddComponent<MeshFilter>();
                 //var mr = go.AddComponent<MeshRenderer>();
-                
+
 
                 // create clone #V2
-                GameObject clone = Instantiate(_cellPrefab, pos, Quaternion.identity);
+                Cell clone = new Cell(); // Instantiate(_cellPrefab, pos, Quaternion.identity);
                 m_grid[col, row] = clone;
             }
         }
