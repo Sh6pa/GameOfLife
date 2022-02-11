@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Cell : MonoBehaviour
 {
-    public bool Alive = false;
     public int m_Neighbors = 0;
     public bool m_IsAlive = false;
 

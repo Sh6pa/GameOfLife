@@ -44,7 +44,7 @@ public class GridManager : MonoBehaviour
     
 
     [SerializeField]
-    private GameObject _cellPrefab;
+    private Cell _cellPrefab;
     #endregion
 
     private void Init()
@@ -69,7 +69,7 @@ public class GridManager : MonoBehaviour
 
 
                 // create clone #V2
-                Cell clone = new Cell(); // Instantiate(_cellPrefab, pos, Quaternion.identity);
+                Cell clone = Instantiate(_cellPrefab, pos, Quaternion.identity);
                 m_grid[col, row] = clone;
             }
         }
