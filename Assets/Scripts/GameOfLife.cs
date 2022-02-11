@@ -4,28 +4,41 @@ using UnityEngine;
 
 public class GameOfLife : MonoBehaviour
 {
-    public float _stepDelay;
+    [SerializeField] public float _stepDelay = 1;
     void Update()
     {
         _counter += Time.deltaTime;
-
-        if (_counter > _stepDelay)
+        float step = 1 / (_stepDelay * 0.1f);
+        if (_counter > step)
         {
             SimulationStep();
             _counter = 0;
         }
     }
 
+    public void ChangeSpeed(float delay)
+    {
+        _stepDelay = (int)delay;
+    }
+
     private void SimulationStep()
     {
-        for(int i = 0; i < GridManager.Instance.m_numCol; i++)
+        for(int i = 0; i < GridManager.Instance.m_grid.GetLength(0); i++)
         {
-            for(int j = 0; j < GridManager.Instance.m_numRow; j++)
+            for(int j = 0; j < GridManager.Instance.m_grid.GetLength(1); j++)
             {
                 int n = CountNeighbors(i, j);
-                //Debug.Log(n);
                 var cell = GridManager.Instance.m_grid[i, j];
-                changeMesh(cell, n);               
+                cell.m_Neighbors = n;
+                              
+            }
+        }
+        for (int i = 0; i < GridManager.Instance.m_grid.GetLength(0); i++)
+        {
+            for (int j = 0; j < GridManager.Instance.m_grid.GetLength(1); j++)
+            {
+                var cell = GridManager.Instance.m_grid[i, j];
+                changeMesh(cell);
             }
         }
     }
@@ -38,7 +51,7 @@ public class GameOfLife : MonoBehaviour
             for (int j = row - 1; j <= row + 1; j++)
             {
                 
-                if (i < GridManager.Instance.m_numCol && i >= 0 && j < GridManager.Instance.m_numRow && j >= 0 && (i != col && j != row))
+                if (i < GridManager.Instance.m_grid.GetLength(0) && i >= 0 && j < GridManager.Instance.m_grid.GetLength(1) && j >= 0 && !(i == col && j == row)) // (i != col && j != row)
                 {
                     var cell = GridManager.Instance.m_grid[i, j];
                     if (cell.m_IsAlive)
@@ -51,25 +64,22 @@ public class GameOfLife : MonoBehaviour
         return n;
     }
 
-    private void changeMesh(Cell cell, int n)
+    private void changeMesh(Cell cell)
     {
-        Debug.Log($"n={n}");
         var meshRenderer = cell.GetComponentInChildren<MeshRenderer>();
-        if (n == 3)
+        
+
+        if (cell.m_Neighbors == 3)
         {
-            Debug.Log("222222");
             meshRenderer.sharedMaterial = InputManager.IM.m_aliveMaterial;
             cell.m_IsAlive = true;
-            Debug.Log("3");
         }
-        else if (n < 2 || n > 3)
+        else if (cell.m_Neighbors < 2 || cell.m_Neighbors > 3)
         {
-            Debug.Log("333333");
             meshRenderer.sharedMaterial = InputManager.IM.m_deadMaterial;
             cell.m_IsAlive = false;
-            Debug.Log("2");
         }
-    } 
+    }
 
     private float _counter;
 }
