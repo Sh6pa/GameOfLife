@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
+    #region Singleton
+    public static InputManager IM;
+   
+    #endregion
+
+
     [SerializeField] private GridManager _gridManager;
     // Update is called once per frame
-    [SerializeField] private Material _deadMaterial;
-    [SerializeField] private Material _aliveMaterial;
+    [SerializeField] public Material m_deadMaterial;
+    [SerializeField] public Material m_aliveMaterial;
 
     private void Awake()
     {
@@ -19,8 +25,18 @@ public class InputManager : MonoBehaviour
         // _gridManager = obj as GridManager;
 
         // Nouvelle façon
-        _gridManager = FindObjectOfType< GridManager >();
+        
 
+        if (IM == null)
+        {
+            IM = this;
+            DontDestroyOnLoad(this);
+            Init();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         // Tous les composants
         // FindObjectOfType < GridManager >();
 
@@ -29,6 +45,11 @@ public class InputManager : MonoBehaviour
         // GameObject.FindGameObjectWithTag("toto");
         // Transform tr = toto.getComponent<Transform>();
 
+    }
+
+    private void Init()
+    {
+        _gridManager = FindObjectOfType<GridManager>();
     }
 
     void Update()
@@ -70,12 +91,12 @@ public class InputManager : MonoBehaviour
         var meshRenderer = cell.GetComponentInChildren<MeshRenderer>();
         if (cell.m_IsAlive)
         {
-            meshRenderer.sharedMaterial = _deadMaterial;
+            meshRenderer.sharedMaterial = m_deadMaterial;
             cell.m_IsAlive = false;
         }
         else
         {
-            meshRenderer.sharedMaterial = _aliveMaterial;
+            meshRenderer.sharedMaterial = m_aliveMaterial;
             cell.m_IsAlive = true;
         }
     }
