@@ -80,6 +80,24 @@ public class GridManager : MonoBehaviour
                 m_grid[col, row] = clone;
             }
         }
+
+        Camera mainCamera = Camera.main;
+        // screen smaller than the entire grid
+        if(Screen.height < m_numRow || Screen.width < m_numCol)
+        {
+            mainCamera.orthographicSize = (m_numCol > m_numRow) ? (m_numCol / 2.0f) : (m_numRow / 2.0f);
+        } else
+        {
+            if (Screen.height > Screen.width)
+            {
+                mainCamera.orthographicSize = (m_numCol > m_numRow) ? (m_numCol / 2.0f) : (m_numRow / 2.0f);
+            } else
+            {
+                mainCamera.orthographicSize = (m_numCol > m_numRow) ? (m_numCol / 2.0f) : (m_numRow / 2.0f);
+            }
+                
+        }
+        mainCamera.transform.position = new Vector3(m_numCol/2.0f, m_numRow/2.0f, mainCamera.transform.position.z);
     }
 
     public void ChangeRows(float rows)

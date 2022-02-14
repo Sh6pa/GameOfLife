@@ -5,15 +5,20 @@ using UnityEngine;
 public class GameOfLife : MonoBehaviour
 {
     [SerializeField] public float _stepDelay = 1;
+    [SerializeField] public bool _play = false;
     void Update()
     {
-        _counter += Time.deltaTime;
-        float step = 1 / (_stepDelay * 0.1f);
-        if (_counter > step)
+        if (_play)
         {
-            SimulationStep();
-            _counter = 0;
+            _counter += Time.deltaTime;
+            float step = 1 / (_stepDelay * 0.001f);
+            if (_counter > step)
+            {
+                SimulationStep();
+                _counter = 0;
+            }
         }
+       
     }
 
     public void ChangeSpeed(float delay)
