@@ -26,6 +26,23 @@ public class GameOfLife : MonoBehaviour
         _stepDelay = (int)delay;
     }
 
+    public void Play()
+    {
+        _play = true;
+    }
+
+    public void Pause()
+    {
+        _play = false;
+    }
+
+    public void Step()
+    {
+        _play = false;
+        SimulationStep();
+
+    }
+
     private void SimulationStep()
     {
         for(int i = 0; i < GridManager.Instance.m_grid.GetLength(0); i++)

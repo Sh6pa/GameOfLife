@@ -12,6 +12,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text _colsText;
     [SerializeField] private Slider _speedSlider;
     [SerializeField] private TMP_Text _speedText;
+    public DataManager dataManager;
+    public GridManager gridManager;
 
     private void Start()
     {
@@ -31,5 +33,10 @@ public class UIManager : MonoBehaviour
     public void ChangeSpeed(float value)
     {
         _speedText.text = ((int)value).ToString();
+    }
+
+    public void Save()
+    {
+        dataManager.SaveToJson();
     }
 }
