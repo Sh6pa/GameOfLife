@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -14,6 +15,20 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text _speedText;
     public DataManager dataManager;
     public GridManager gridManager;
+
+    public static UIManager UIM;
+    private void Awake()
+    {
+        if (UIM == null)
+        {
+            UIM = this;
+            DontDestroyOnLoad(this);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -35,8 +50,13 @@ public class UIManager : MonoBehaviour
         _speedText.text = ((int)value).ToString();
     }
 
-    public void Save()
+    public async void Save()
     {
-        dataManager.SaveToJson();
+        await dataManager.SaveToJson();
+    }
+
+    public async void Load()
+    {
+        await dataManager.LoadJson();
     }
 }

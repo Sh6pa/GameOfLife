@@ -44,7 +44,7 @@ public class GridManager : MonoBehaviour
     
 
     [SerializeField]
-    private Cell _cellPrefab;
+    public Cell m_cellPrefab;
     #endregion
 
     private void Init()
@@ -76,27 +76,12 @@ public class GridManager : MonoBehaviour
 
 
                 // create clone #V2
-                Cell clone = Instantiate(_cellPrefab, pos, Quaternion.identity);
+                Cell clone = Instantiate(m_cellPrefab, pos, Quaternion.identity);
                 m_grid[col, row] = clone;
             }
         }
 
-        Camera mainCamera = Camera.main;
-        // if ratio width/height is bigger for the grid than the cam,
-        // this means width is larger -> size on width calculated by height and ratio
-        Debug.Log($"ratio Camera : {mainCamera.aspect}, ratio Grid {((float)m_numCol / (float)m_numRow)}, cols : {m_numCol}, rows : {m_numRow}");
-        if (mainCamera.aspect < ((float)m_numCol / (float)m_numRow))
-        {
-            Debug.Log("Based on width");
-            mainCamera.orthographicSize = m_numCol / mainCamera.aspect * 0.5f;
-            // dividing by the ratio width/height to get 
-        } else // only need on height /2 as it is in the middle
-        {
-            Debug.Log("Based on height");
-            mainCamera.orthographicSize = (m_numRow * 0.5f);
-        }
-        
-        mainCamera.transform.position = new Vector3(m_numCol/2.0f, m_numRow/2.0f, mainCamera.transform.position.z);
+        UpdateCamera();
     }
 
     public void ChangeRows(float rows)
@@ -109,6 +94,23 @@ public class GridManager : MonoBehaviour
         m_numCol = (int)cols;
     }
 
+    public void UpdateCamera()
+    {
+        Camera mainCamera = Camera.main;
+        // if ratio width/height is bigger for the grid than the cam,
+        // this means width is larger -> size on width calculated by height and ratio
+        if (mainCamera.aspect < ((float)m_numCol / (float)m_numRow))
+        {
+            mainCamera.orthographicSize = m_numCol / mainCamera.aspect * 0.5f;
+            // dividing by the ratio width/height to get 
+        }
+        else // only need on height /2 as it is in the middle
+        {
+            mainCamera.orthographicSize = (m_numRow * 0.5f);
+        }
+
+        mainCamera.transform.position = new Vector3(m_numCol / 2.0f, m_numRow / 2.0f, mainCamera.transform.position.z);
+    }
     #region Private
 
 

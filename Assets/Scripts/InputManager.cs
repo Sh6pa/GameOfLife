@@ -9,8 +9,6 @@ public class InputManager : MonoBehaviour
    
     #endregion
 
-
-    [SerializeField] private GridManager _gridManager;
     // Update is called once per frame
     [SerializeField] public Material m_deadMaterial;
     [SerializeField] public Material m_aliveMaterial;
@@ -31,7 +29,6 @@ public class InputManager : MonoBehaviour
         {
             IM = this;
             DontDestroyOnLoad(this);
-            Init();
         }
         else
         {
@@ -45,11 +42,6 @@ public class InputManager : MonoBehaviour
         // GameObject.FindGameObjectWithTag("toto");
         // Transform tr = toto.getComponent<Transform>();
 
-    }
-
-    private void Init()
-    {
-        _gridManager = FindObjectOfType<GridManager>();
     }
 
     void Update()
