@@ -67,14 +67,6 @@ public class GridManager : MonoBehaviour
             for (int col = 0; col < m_numCol; col++)
             {
                 Vector3Int pos = new Vector3Int(col, row, 0);
-
-                // useless
-                //var go = new GameObject();
-                //go.name = $"{col},{row}";
-                //var mf = go.AddComponent<MeshFilter>();
-                //var mr = go.AddComponent<MeshRenderer>();
-
-
                 // create clone #V2
                 Cell clone = Instantiate(m_cellPrefab, pos, Quaternion.identity);
                 m_grid[col, row] = clone;

@@ -4,14 +4,26 @@ using UnityEngine;
 
 public class GameOfLife : MonoBehaviour
 {
-    [SerializeField] public float _stepDelay = 1;
-    [SerializeField] public bool _play = false;
+    [SerializeField] public float m_stepDelay = 1;
+    [SerializeField] public bool m_play = false;
+
+    [System.Serializable]
+    public enum RuleOfNeighbour
+    {
+        Closed,
+        Symetrical,
+        Infinite
+    };
+
+    // Sets up the algorithm of choice
+    public RuleOfNeighbour m_ruleOfNeighbour;
+
     void Update()
     {
-        if (_play)
+        if (m_play)
         {
             _counter += Time.deltaTime;
-            float step = 1 / (_stepDelay * 0.001f);
+            float step = 1 / (m_stepDelay * 0.001f);
             if (_counter > step)
             {
                 SimulationStep();
@@ -23,38 +35,60 @@ public class GameOfLife : MonoBehaviour
 
     public void ChangeSpeed(float delay)
     {
-        _stepDelay = (int)delay;
+        m_stepDelay = (int)delay;
     }
 
     public void Play()
     {
-        _play = true;
+        m_play = true;
     }
 
     public void Pause()
     {
-        _play = false;
+        m_play = false;
     }
 
     public void Step()
     {
-        _play = false;
+        m_play = false;
         SimulationStep();
 
     }
 
     private void SimulationStep()
     {
-        for(int i = 0; i < GridManager.Instance.m_grid.GetLength(0); i++)
+        countNeighbours();
+        updateCellMesh();
+    }
+
+
+    private void countNeighbours()
+    {
+        for (int i = 0; i < GridManager.Instance.m_grid.GetLength(0); i++)
         {
-            for(int j = 0; j < GridManager.Instance.m_grid.GetLength(1); j++)
+            for (int j = 0; j < GridManager.Instance.m_grid.GetLength(1); j++)
             {
-                int n = CountNeighbors(i, j);
+                int n = 0;
+                if (m_ruleOfNeighbour == RuleOfNeighbour.Closed)
+                {
+                    n = CountNeighborsCloseGrid(i, j);
+                } else if (m_ruleOfNeighbour == RuleOfNeighbour.Symetrical)
+                {
+                    n = CountNeighborsSymetricalGrid(i, j);
+                } else if (m_ruleOfNeighbour == RuleOfNeighbour.Infinite)
+                {
+                    n = CountNeighborsCloseGrid(i, j);
+                }
+                
                 var cell = GridManager.Instance.m_grid[i, j];
                 cell.m_Neighbors = n;
-                              
+
             }
         }
+    }
+
+    private void updateCellMesh()
+    {
         for (int i = 0; i < GridManager.Instance.m_grid.GetLength(0); i++)
         {
             for (int j = 0; j < GridManager.Instance.m_grid.GetLength(1); j++)
@@ -65,7 +99,7 @@ public class GameOfLife : MonoBehaviour
         }
     }
 
-    private int CountNeighbors(int col, int row)
+    private int CountNeighborsCloseGrid(int col, int row)
     {
         int n = 0;
         for(int i = col - 1; i <= col + 1; i++)
@@ -73,6 +107,49 @@ public class GameOfLife : MonoBehaviour
             for (int j = row - 1; j <= row + 1; j++)
             {
                 
+                if (i < GridManager.Instance.m_grid.GetLength(0) && i >= 0 && j < GridManager.Instance.m_grid.GetLength(1) && j >= 0 && !(i == col && j == row)) // (i != col && j != row)
+                {
+                    var cell = GridManager.Instance.m_grid[i, j];
+                    if (cell.m_IsAlive)
+                    {
+                        n++;
+                    }
+                }
+            }
+        }
+        return n;
+    }
+
+    private int CountNeighborsSymetricalGrid(int col, int row)
+    {
+        int n = 0;
+        for (int i = col - 1; i <= col + 1; i++)
+        {
+            for (int j = row - 1; j <= row + 1; j++)
+            {
+
+                if (!(i == col && j == row)) // (i != col && j != row)
+                {
+                    
+                    var cell = GridManager.Instance.m_grid[(i + GridManager.Instance.m_grid.GetLength(0)) % GridManager.Instance.m_grid.GetLength(0), (j + GridManager.Instance.m_grid.GetLength(1)) % GridManager.Instance.m_grid.GetLength(1)];
+                    if (cell.m_IsAlive)
+                    {
+                        n++;
+                    }
+                }
+            }
+        }
+        return n;
+    }
+
+    private int CountNeighborsSymetrical(int col, int row)
+    {
+        int n = 0;
+        for (int i = col - 1; i <= col + 1; i++)
+        {
+            for (int j = row - 1; j <= row + 1; j++)
+            {
+
                 if (i < GridManager.Instance.m_grid.GetLength(0) && i >= 0 && j < GridManager.Instance.m_grid.GetLength(1) && j >= 0 && !(i == col && j == row)) // (i != col && j != row)
                 {
                     var cell = GridManager.Instance.m_grid[i, j];
