@@ -19,6 +19,8 @@ public class GridManager : MonoBehaviour
     [Range(1, 100)]
     public int m_numRow = 10;
 
+    [SerializeField] public int m_BiggerGridPadding = 15;
+
     #endregion
 
     #region Singleton
@@ -61,18 +63,7 @@ public class GridManager : MonoBehaviour
                 Destroy(cell.gameObject);
             }
         }
-        m_grid = new Cell[m_numCol, m_numRow];
-        for (int row = 0; row < m_numRow; row++)
-        {
-            for (int col = 0; col < m_numCol; col++)
-            {
-                Vector3Int pos = new Vector3Int(col, row, 0);
-                // create clone #V2
-                Cell clone = Instantiate(m_cellPrefab, pos, Quaternion.identity);
-                m_grid[col, row] = clone;
-            }
-        }
-
+        SetNewGrid();        
         UpdateCamera();
     }
 
@@ -102,6 +93,42 @@ public class GridManager : MonoBehaviour
         }
 
         mainCamera.transform.position = new Vector3(m_numCol / 2.0f, m_numRow / 2.0f, mainCamera.transform.position.z);
+    }
+
+    public void SetNewGridWithSize(int col, int row)
+    {
+        m_numRow = row;
+        m_numCol = col;
+        SetNewGrid();
+    }
+    public void SetNewGrid()
+    {
+        m_grid = new Cell[m_numCol, m_numRow];
+        GameOfLife.BiggerGrid = new LightCell[m_numCol + (m_BiggerGridPadding*2), m_numRow + (m_BiggerGridPadding*2)];
+        fillGrid();
+    }
+
+    private void fillGrid()
+    {
+        for (int row = 0; row < m_numRow; row++)
+        {
+            for (int col = 0; col < m_numCol; col++)
+            {
+                Vector3Int pos = new Vector3Int(col, row, 0);
+                // create clone #V2
+                Cell clone = Instantiate(m_cellPrefab, pos, Quaternion.identity);
+                m_grid[col, row] = clone;
+            }
+        }
+        for (int row = 0; row < m_numRow + (m_BiggerGridPadding * 2); row++)
+        {
+            for (int col = 0; col < m_numCol + (m_BiggerGridPadding * 2); col++)
+            {
+                // create clone #light
+                LightCell clone = new LightCell();
+                GameOfLife.BiggerGrid[col, row] = clone;
+            }
+        }
     }
     #region Private
 

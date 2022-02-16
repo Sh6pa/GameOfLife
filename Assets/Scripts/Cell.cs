@@ -8,3 +8,9 @@ public class Cell : MonoBehaviour
     public bool m_IsAlive = false;
 
 }
+
+public class LightCell
+{
+    public int m_Neighbors = 0;
+    public bool m_IsAlive = false;
+}
