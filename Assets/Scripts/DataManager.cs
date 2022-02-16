@@ -111,7 +111,11 @@ public class DataManager : MonoBehaviour
             {
                 if(GridManager.Instance.m_grid[i, j].m_IsAlive)
                 {
-                    tex.ReadPixels(new Rect(0, 0, i, j), 0, 0);
+                    tex.SetPixel(i, j ,Color.white);
+                    tex.Apply();
+                } else
+                {
+                    tex.SetPixel(i, j, Color.black);
                     tex.Apply();
                 }
             }
@@ -126,6 +130,49 @@ public class DataManager : MonoBehaviour
         {
             await sourceStream.WriteAsync(bytes, 0, bytes.Length);
         };
+    }
+
+    public async Task LoadPng()
+    {
+        string filePath = Application.persistentDataPath + "/Grids";
+        string path = Path.Combine(filePath, $"{name}.png");
+        Texture2D tex = new Texture2D(2,2);
+        byte[] buffer = new byte[4096];
+        using (FileStream sourceStream = new FileStream(path,
+            FileMode.Open, FileAccess.Read, FileShare.Read,
+            bufferSize: 4096, useAsync: true))
+        {
+            await sourceStream.ReadAsync(buffer, 0, buffer.Length);
+            tex.LoadImage(buffer);
+        };
+        if (GridManager.Instance.m_grid != null)
+        {
+            foreach (var cell in GridManager.Instance.m_grid)
+            {
+                Destroy(cell.gameObject);
+            }
+        }
+        GridManager.Instance.m_grid = new Cell[tex.width, tex.height];
+        GridManager.Instance.ChangeCols(tex.width);
+        GridManager.Instance.ChangeRows(tex.height);
+        UIManager.UIM.ChangeCols(tex.width);
+        UIManager.UIM.ChangeRows(tex.height);
+        GridManager.Instance.UpdateCamera();
+        for (int i = 0; i < tex.width; i++)
+        {
+            for (int j = 0; j < tex.height; j++)
+            {
+                Vector3Int pos = new Vector3Int(i, j, 0);
+                Cell clone = Instantiate(GridManager.Instance.m_cellPrefab, pos, Quaternion.identity);
+                if (tex.GetPixel(i, j) == Color.white)
+                {
+                    var meshRenderer = clone.GetComponentInChildren<MeshRenderer>();
+                    meshRenderer.sharedMaterial = InputManager.IM.m_aliveMaterial;
+                    clone.m_IsAlive = true;
+                }
+                GridManager.Instance.m_grid[i, j] = clone;
+            }
+        }
     }
 
 }
