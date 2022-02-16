@@ -50,13 +50,19 @@ public class UIManager : MonoBehaviour
         _speedText.text = ((int)value).ToString();
     }
 
-    public async void Save()
+    public async void SavetoJson()
     {
         await dataManager.SaveToJson();
     }
 
-    public async void Load()
+    public async void LoadJson()
     {
         await dataManager.LoadJson();
     }
+
+    public async void SavetoPng()
+    {
+        await dataManager.SaveToPng();
+    }
+
 }

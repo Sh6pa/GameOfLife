@@ -31,7 +31,7 @@ public class DataManager : MonoBehaviour
     public async Task SaveToJson()
     {
         string json = SetData(); ;
-        string filePath = UnityEngine.Application.persistentDataPath + "/Grids";
+        string filePath = Application.persistentDataPath + "/Grids";
         byte[] encodedText = Encoding.UTF8.GetBytes(json);
         DirectoryInfo info = new DirectoryInfo(filePath);
         if (!info.Exists)
@@ -49,7 +49,7 @@ public class DataManager : MonoBehaviour
 
     public async Task LoadJson()
     {
-        string filePath = UnityEngine.Application.persistentDataPath + "/Grids";
+        string filePath = Application.persistentDataPath + "/Grids";
         string path = Path.Combine(filePath, $"{name}.json");
         using var sourceStream =
         new FileStream(
@@ -98,6 +98,34 @@ public class DataManager : MonoBehaviour
                 indexTracker++;
             }
         }
+    }
+
+    public async Task SaveToPng() 
+    {
+        int width = GridManager.Instance.m_numCol;
+        int height = GridManager.Instance.m_numRow;
+        Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
+        for(int i = 0; i < GridManager.Instance.m_numCol; i++) 
+        {
+            for(int j = 0; j < GridManager.Instance.m_numRow; j++)
+            {
+                if(GridManager.Instance.m_grid[i, j].m_IsAlive)
+                {
+                    tex.ReadPixels(new Rect(0, 0, i, j), 0, 0);
+                    tex.Apply();
+                }
+            }
+        }
+        byte[] bytes = tex.EncodeToPNG();
+        Object.Destroy(tex);
+        string filePath = Application.persistentDataPath + "/Grids";
+        string path = Path.Combine(filePath, $"{name}.png");
+        using (FileStream sourceStream = new FileStream(path,
+            FileMode.Create, FileAccess.Write, FileShare.None,
+            bufferSize: 4096, useAsync: true))
+        {
+            await sourceStream.WriteAsync(bytes, 0, bytes.Length);
+        };
     }
 
 }

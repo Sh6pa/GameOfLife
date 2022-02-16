@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
+  m_IndirectSpecularColor: {r: 0.3731193, g: 0.38073996, b: 0.35872698, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1789,7 +1789,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1722240292}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: Save
+        m_MethodName: SavetoPng
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1866,8 +1866,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72be500292c0eb641bb48462e45bca1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _stepDelay: 100
-  _play: 0
+  m_stepDelay: 1
+  m_play: 0
+  m_ruleOfNeighbour: 0
 --- !u!4 &1080925974
 Transform:
   m_ObjectHideFlags: 0
@@ -2823,7 +2824,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1722240292}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: Load
+        m_MethodName: LoadJson
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4192,7 +4193,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2333b76480d482643970c1e463b01490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridManager: {fileID: 517768383}
   m_deadMaterial: {fileID: 2100000, guid: 9647abb151341ac4e91d3a4c66f3c5f1, type: 2}
   m_aliveMaterial: {fileID: 2100000, guid: 73a4bf61ffcc68f4096e3ff3cf39cab7, type: 2}
 --- !u!4 &1986789447
