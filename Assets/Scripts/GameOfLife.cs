@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class GameOfLife : MonoBehaviour
 {
+    #region Public
     [SerializeField] public float m_stepDelay = 1;
     [SerializeField] public bool m_play = false;
+    [SerializeField] public int m_BiggerGridSize = 15;
 
     [System.Serializable]
     public enum RuleOfNeighbour
@@ -17,6 +19,7 @@ public class GameOfLife : MonoBehaviour
 
     // Sets up the algorithm of choice
     public RuleOfNeighbour m_ruleOfNeighbour;
+    #endregion
 
     void Update()
     {
@@ -77,7 +80,7 @@ public class GameOfLife : MonoBehaviour
                     n = CountNeighborsSymetricalGrid(i, j);
                 } else if (m_ruleOfNeighbour == RuleOfNeighbour.Infinite)
                 {
-                    n = CountNeighborsCloseGrid(i, j);
+                    n = CountNeighborsBiggerGrid(i, j);
                 }
                 
                 var cell = GridManager.Instance.m_grid[i, j];
@@ -97,6 +100,14 @@ public class GameOfLife : MonoBehaviour
                 changeMesh(cell);
             }
         }
+    }
+
+    private int CountNeighborsBiggerGrid(int col, int row)
+    {
+        int n = 0;
+
+
+        return n;
     }
 
     private int CountNeighborsCloseGrid(int col, int row)
@@ -181,4 +192,5 @@ public class GameOfLife : MonoBehaviour
     }
 
     private float _counter;
+    private Cell[,] _biggerGrid;
 }
