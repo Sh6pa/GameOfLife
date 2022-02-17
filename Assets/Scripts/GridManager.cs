@@ -130,6 +130,15 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
+    public void ShowGrid(bool show)
+    {
+        foreach (var cell in m_grid)
+        {
+            cell.gameObject.SetActive(show);
+        }
+    }
+
     #region Private
 
 
