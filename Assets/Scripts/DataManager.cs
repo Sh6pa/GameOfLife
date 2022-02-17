@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
-    private string name = "Grid";
 
     private string SetData()
     {
@@ -28,7 +27,7 @@ public class DataManager : MonoBehaviour
         return JsonUtility.ToJson(getClassData);
     }
 
-    public async Task SaveToJson()
+    public async Task SaveToJson(string name)
     {
         string json = SetData(); ;
         string filePath = Application.persistentDataPath + "/Grids";
@@ -47,7 +46,7 @@ public class DataManager : MonoBehaviour
         };
     }
 
-    public async Task LoadJson()
+    public async Task LoadJson(string name)
     {
         string filePath = Application.persistentDataPath + "/Grids";
         string path = Path.Combine(filePath, $"{name}.json");
@@ -100,7 +99,7 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    public async Task SaveToPng() 
+    public async Task SaveToPng(string name) 
     {
         int width = GridManager.Instance.m_numCol;
         int height = GridManager.Instance.m_numRow;
@@ -132,7 +131,7 @@ public class DataManager : MonoBehaviour
         };
     }
 
-    public async Task LoadPng()
+    public async Task LoadPng(string name)
     {
         string filePath = Application.persistentDataPath + "/Grids";
         string path = Path.Combine(filePath, $"{name}.png");
@@ -173,6 +172,33 @@ public class DataManager : MonoBehaviour
                 GridManager.Instance.m_grid[i, j] = clone;
             }
         }
+    }
+
+    public List<string> GetJson()
+    {
+        string path = Application.persistentDataPath + "/Grids";
+        string [] files = Directory.GetFiles(path, "*.json*");
+        List<string> f = new List<string>();
+        f.Add("Select Json");
+        foreach(string file in files)
+        {
+            f.Add(file.Substring(path.Length+1));
+        }
+        return f;
+
+    }
+
+    public List<string> GetPng()
+    {
+        string path = Application.persistentDataPath + "/Grids";
+        string [] files = Directory.GetFiles(path, "*.png*");
+        List<string> f = new List<string>();
+        f.Add("Select Png");
+        foreach(string file in files)
+        {
+            f.Add(file.Substring(path.Length+1));
+        }
+        return f;
     }
 
 }
