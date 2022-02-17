@@ -15,14 +15,14 @@ public class InputManager : MonoBehaviour
 
     private void Awake()
     {
-        // Ancienne manière de recherche
+        // Ancienne maniï¿½re de recherche
         //Object obj = FindObjectOfType(typeof(GridManager));
         //_gridManager = (GridManager)obj;
 
         // Pour les valeurs nullables
         // _gridManager = obj as GridManager;
 
-        // Nouvelle façon
+        // Nouvelle faï¿½on
         
 
         if (IM == null)

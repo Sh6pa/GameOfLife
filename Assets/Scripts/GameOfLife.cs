@@ -105,6 +105,11 @@ public class GameOfLife : MonoBehaviour
         Debug.Log(m_ruleOfNeighbour);
     }
 
+    public void Quit()
+    {
+        Application.Quit();
+    }
+
     private void countNeighbours()
     {
         if (m_ruleOfNeighbour == RuleOfNeighbour.Infinite)
