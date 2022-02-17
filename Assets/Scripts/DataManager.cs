@@ -7,53 +7,22 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
-    private void Start()
-    {
-        string filePath = Application.persistentDataPath + "/Grids";
-        DirectoryInfo info = new DirectoryInfo(filePath);
-        if (!info.Exists)
-        {
-            info.Create();
-        }
-    }
-
-    private Grid SetData()
-    {
-        Grid getClassData  = new Grid();
-        getClassData.m_name = name;
-        getClassData.m_cols = GridManager.Instance.m_numCol;
-        getClassData.m_rows = GridManager.Instance.m_numRow;
-        getClassData.m_Cells = new string[getClassData.m_cols * getClassData.m_rows];
-        int indexTracker = 0;
-        for (int i = 0; i<getClassData.m_cols; i++)
-        {
-            for(int j = 0; j<getClassData.m_rows; j++)
-            {
-                getClassData.m_Cells[indexTracker] = GridManager.Instance.m_grid[i, j].m_IsAlive.ToString();
-                indexTracker++;
-            }
-        }
-        return getClassData;
-    }
-
     public async Task SaveToJson(string name)
     {
         Grid gridData = SetData();
         string json = null;
         byte[] encodedText = null;
         string filePath = Application.persistentDataPath + "/Grids";
+        
+        // multithreading to encode to json
         Task jsonEncoded = Task.Run(() =>
         {
            json = JsonUtility.ToJson(gridData);
            encodedText = Encoding.UTF8.GetBytes(json);
         });
         await Task.WhenAll(jsonEncoded);
-        
-        DirectoryInfo info = new DirectoryInfo(filePath);
-        if (!info.Exists)
-        {
-            info.Create();
-        }
+
+        // writes the json file
         string path = Path.Combine(filePath, $"{name}.json");
         using (FileStream sourceStream = new FileStream(path,
             FileMode.Create, FileAccess.Write, FileShare.None,
@@ -66,12 +35,9 @@ public class DataManager : MonoBehaviour
     public async Task LoadJson(string name)
     {
         string filePath = Application.persistentDataPath + "/Grids";
-        DirectoryInfo info = new DirectoryInfo(filePath);
-        if (!info.Exists)
-        {
-            info.Create();
-        }
+        
         string path = Path.Combine(filePath, $"{name}.json");
+        // get file info
         using var sourceStream =
         new FileStream(
             path,
@@ -82,6 +48,7 @@ public class DataManager : MonoBehaviour
         byte[] buffer = new byte[0x1000];
         int numRead;
         string text = null;
+        // multithreading
         Task byteConversion = Task.Run(async () =>
         {
             while ((numRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
@@ -93,22 +60,11 @@ public class DataManager : MonoBehaviour
         await Task.WhenAll(byteConversion);
         
         Grid grid = JsonUtility.FromJson<Grid>(sb.ToString());
-        
-        if (GridManager.Instance.m_grid != null)
-        {
-            foreach (var cell in GridManager.Instance.m_grid)
-            {
-                Destroy(cell.gameObject);
-            }
-        }
-        //GridManager.Instance.m_grid = new Cell[grid.m_cols, grid.m_rows];
-        //GridManager.Instance.ChangeCols(grid.m_cols);
-        //GridManager.Instance.ChangeRows(grid.m_rows);
-        GridManager.Instance.SetNewGridWithSize(grid.m_cols, grid.m_rows);
-        UIManager.UIM.ChangeCols(grid.m_cols);
-        UIManager.UIM.ChangeRows(grid.m_rows);
-        GridManager.Instance.UpdateCamera();
 
+        // destroys old cells, etc...
+        GridManager.Instance.DeleteOldGridAndCreateNewOneWithSize(grid.m_cols, grid.m_rows);
+
+        // fill current grid with Cells
         int indexTracker = 0;
         for (int i = 0; i < grid.m_cols; i++)
         {
@@ -132,6 +88,7 @@ public class DataManager : MonoBehaviour
     {
         int width = GridManager.Instance.m_numCol;
         int height = GridManager.Instance.m_numRow;
+        // creates texture the size of the current grid with white px => alive and black px => dead
         Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
         for(int i = 0; i < GridManager.Instance.m_numCol; i++) 
         {
@@ -148,10 +105,12 @@ public class DataManager : MonoBehaviour
                 }
             }
         }
+        // encoding to png and add file
         byte[] bytes = tex.EncodeToPNG();
         Object.Destroy(tex);
         string filePath = Application.persistentDataPath + "/Grids";
         string path = Path.Combine(filePath, $"{name}.png");
+        // write png file async
         using (FileStream sourceStream = new FileStream(path,
             FileMode.Create, FileAccess.Write, FileShare.None,
             bufferSize: 4096, useAsync: true))
@@ -176,21 +135,10 @@ public class DataManager : MonoBehaviour
             tex.LoadImage(buffer);
         };
 
+        // delete previous cell in grid, sets camera with new empty grid (but with good size)
+        GridManager.Instance.DeleteOldGridAndCreateNewOneWithSize(tex.width, tex.height);
 
-        if (GridManager.Instance.m_grid != null)
-        {
-            foreach (var cell in GridManager.Instance.m_grid)
-            {
-                Destroy(cell.gameObject);
-            }
-        }
-        //GridManager.Instance.m_grid = new Cell[tex.width, tex.height];
-        //GridManager.Instance.ChangeCols(tex.width);
-        //GridManager.Instance.ChangeRows(tex.height);
-        GridManager.Instance.SetNewGridWithSize(tex.width, tex.height);
-        UIManager.UIM.ChangeCols(tex.width);
-        UIManager.UIM.ChangeRows(tex.height);
-        GridManager.Instance.UpdateCamera();
+        // fill the grid with texture info
         for (int i = 0; i < tex.width; i++)
         {
             for (int j = 0; j < tex.height; j++)
@@ -208,6 +156,7 @@ public class DataManager : MonoBehaviour
         }
     }
 
+    // give the list of saved json file for dropdown
     public List<string> GetJson()
     {
         
@@ -224,6 +173,7 @@ public class DataManager : MonoBehaviour
 
     }
 
+    // give the list of saved png file for dropdown
     public List<string> GetPng()
     {
         string path = Application.persistentDataPath + "/Grids";
@@ -238,6 +188,38 @@ public class DataManager : MonoBehaviour
         return f;
     }
 
+    // check if the folder location exists and creates it
+    private void Start()
+    {
+        
+        string filePath = Application.persistentDataPath + "/Grids";
+        DirectoryInfo info = new DirectoryInfo(filePath);
+        if (!info.Exists)
+        {
+            info.Create();
+        }
+    }
+
+    // get all the data ton be JSon friendly
+    private Grid SetData()
+    {
+        Grid getClassData = new Grid();
+        getClassData.m_name = name;
+        getClassData.m_cols = GridManager.Instance.m_numCol;
+        getClassData.m_rows = GridManager.Instance.m_numRow;
+        getClassData.m_Cells = new string[getClassData.m_cols * getClassData.m_rows];
+        int indexTracker = 0;
+        for (int i = 0; i < getClassData.m_cols; i++)
+        {
+            for (int j = 0; j < getClassData.m_rows; j++)
+            {
+                getClassData.m_Cells[indexTracker] = GridManager.Instance.m_grid[i, j].m_IsAlive.ToString();
+                indexTracker++;
+            }
+        }
+        return getClassData;
+    }
+
 }
 
 [System.Serializable]
@@ -248,3 +230,33 @@ public class Grid
     public int m_cols;
     public string[] m_Cells;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#region What are you doing HERE
+// like seriously ?
+#endregion

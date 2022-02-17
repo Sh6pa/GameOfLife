@@ -7,46 +7,13 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private Slider _rowsSlider;
-    [SerializeField] private TMP_Text _rowsText;
-    [SerializeField] private Slider _colsSlider;
-    [SerializeField] private TMP_Text _colsText;
-    [SerializeField] private Slider _speedSlider;
-    [SerializeField] private TMP_Text _speedText;
-    [SerializeField] private TMP_Dropdown _jsonDropdown;
-    [SerializeField] private TMP_Dropdown _pngDropdown;
-    [SerializeField] private TMP_InputField _fileName;
-    [SerializeField] private TMP_Dropdown _gridDropdown;
-    private string _algoName = "Closed";
-    private string _jsonName;
-    private string _pngName;
+    
     public DataManager dataManager;
     public GridManager gridManager;
     public GameOfLife gameOfLife;
 
     public static UIManager UIM;
-    private void Awake()
-    {
-        if (UIM == null)
-        {
-            UIM = this;
-            DontDestroyOnLoad(this);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    private void Start()
-    {
-        ChangeRows(_rowsSlider.value);
-        ChangeCols(_colsSlider.value);
-        ChangeSpeed(_speedSlider.value);
-        GetPng();
-        GetJson();
-        GetOptions();
-    }
+    
     public void ChangeRows(float value)
     {
         _rowsText.text = ((int)value).ToString();
@@ -120,4 +87,43 @@ public class UIManager : MonoBehaviour
         _algoName = _gridDropdown.options[_gridDropdown.value].text.Substring(0, _gridDropdown.options[_gridDropdown.value].text.Length);
     }
 
+    private void Awake()
+    {
+        if (UIM == null)
+        {
+            UIM = this;
+            DontDestroyOnLoad(this);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void Start()
+    {
+        ChangeRows(_rowsSlider.value);
+        ChangeCols(_colsSlider.value);
+        ChangeSpeed(_speedSlider.value);
+        GetPng();
+        GetJson();
+        GetOptions();
+    }
+
+    #region Private variable
+    // OMG SO MUCH THING (not like other files you know)
+    [SerializeField] private Slider _rowsSlider;
+    [SerializeField] private TMP_Text _rowsText;
+    [SerializeField] private Slider _colsSlider;
+    [SerializeField] private TMP_Text _colsText;
+    [SerializeField] private Slider _speedSlider;
+    [SerializeField] private TMP_Text _speedText;
+    [SerializeField] private TMP_Dropdown _jsonDropdown;
+    [SerializeField] private TMP_Dropdown _pngDropdown;
+    [SerializeField] private TMP_InputField _fileName;
+    [SerializeField] private TMP_Dropdown _gridDropdown;
+    private string _algoName = "Closed";
+    private string _jsonName;
+    private string _pngName;
+    #endregion
 }

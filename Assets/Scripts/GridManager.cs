@@ -49,10 +49,7 @@ public class GridManager : MonoBehaviour
     public Cell m_cellPrefab;
     #endregion
 
-    private void Init()
-    {
-        GenerateGrid();
-    }
+
 
     public void GenerateGrid()
     {
@@ -77,6 +74,7 @@ public class GridManager : MonoBehaviour
         m_numCol = (int)cols;
     }
 
+    // sets camera size and position ton fill the screen with current grid
     public void UpdateCamera()
     {
         Camera mainCamera = Camera.main;
@@ -101,14 +99,49 @@ public class GridManager : MonoBehaviour
         m_numCol = col;
         SetNewGrid();
     }
+
+    // creates empty grid with the great size
     public void SetNewGrid()
     {
         m_grid = new Cell[m_numCol, m_numRow];
         GameOfLife.BiggerGrid = new LightCell[m_numCol + (m_BiggerGridPadding*2), m_numRow + (m_BiggerGridPadding*2)];
-        fillGrid();
+        FillGrid();
     }
 
-    private void fillGrid()
+
+
+    // make grid appear
+    public void ShowGrid(bool show)
+    {
+        foreach (var cell in m_grid)
+        {
+            cell.gameObject.SetActive(show);
+        }
+    }
+
+    // delete previous cell in grid, sets camera & new empty grids (but with good size)
+    public void DeleteOldGridAndCreateNewOneWithSize(int col, int row)
+    {
+        if (m_grid != null)
+        {
+            foreach (var cell in GridManager.Instance.m_grid)
+            {
+                Destroy(cell.gameObject);
+            }
+        }
+        SetNewGridWithSize(col, row);
+        UIManager.UIM.ChangeCols(col);
+        UIManager.UIM.ChangeRows(row);
+        UpdateCamera();
+    }
+
+    private void Init()
+    {
+        GenerateGrid();
+    }
+
+    // fill visible grid with Cell && bigger grid with LightCell
+    private void FillGrid()
     {
         for (int row = 0; row < m_numRow; row++)
         {
@@ -131,16 +164,8 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public void ShowGrid(bool show)
-    {
-        foreach (var cell in m_grid)
-        {
-            cell.gameObject.SetActive(show);
-        }
-    }
-
     #region Private
-
-
+    // HEHEHE It's empty!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // UwU
     #endregion
 }

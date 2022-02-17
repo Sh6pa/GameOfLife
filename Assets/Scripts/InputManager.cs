@@ -15,16 +15,6 @@ public class InputManager : MonoBehaviour
 
     private void Awake()
     {
-        // Ancienne mani�re de recherche
-        //Object obj = FindObjectOfType(typeof(GridManager));
-        //_gridManager = (GridManager)obj;
-
-        // Pour les valeurs nullables
-        // _gridManager = obj as GridManager;
-
-        // Nouvelle fa�on
-        
-
         if (IM == null)
         {
             IM = this;
@@ -34,14 +24,6 @@ public class InputManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        // Tous les composants
-        // FindObjectOfType < GridManager >();
-
-        //tag 
-        // GameObject toto = GameObject.FindGameObjectWithTag("toto");
-        // GameObject.FindGameObjectWithTag("toto");
-        // Transform tr = toto.getComponent<Transform>();
-
     }
 
     void Update()
@@ -49,35 +31,27 @@ public class InputManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             UpdateCell();
-           
-        }
-        if (Input.GetMouseButton(1))
-        {
-
-        } else if (Input.GetMouseButton(2))
-        {
-
         }
     }
-
+    // Updates the cell when left click pressed, changing mesh and isAlive boolean
     private void UpdateCell()
     {
-        Vector3 pos = Input.mousePosition;
-        Camera mainCamera = Camera.main;
-        Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(pos);
-        // Mathf.Clamp();
-        var col = (int)mouseWorldPosition.x;
-        var row = Mathf.FloorToInt(mouseWorldPosition.y);
-        if (col >= 0 && col < GridManager.Instance.m_numCol &&
-            row >= 0 && row < GridManager.Instance.m_numRow)
+        if (GridManager.Instance != null)
         {
-            var cell = GridManager.Instance.m_grid[col, row];
-            //var cell = cellGO.GetComponent<Cell>();
-            //var meshRenderer = cellGO.GetComponentInChildren<MeshRenderer>();
-
-            ChangeCell(cell);
+            Vector3 pos = Input.mousePosition;
+            Camera mainCamera = Camera.main;
+            Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(pos);
+            var col = (int)mouseWorldPosition.x;
+            var row = Mathf.FloorToInt(mouseWorldPosition.y);
+            if (col >= 0 && col < GridManager.Instance.m_numCol &&
+                row >= 0 && row < GridManager.Instance.m_numRow)
+            {
+                var cell = GridManager.Instance.m_grid[col, row];
+                ChangeCell(cell);
+            }
         }
     }
+
     private void ChangeCell(Cell cell)
     {
         var meshRenderer = cell.GetComponentInChildren<MeshRenderer>();

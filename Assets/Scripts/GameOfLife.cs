@@ -25,7 +25,7 @@ public class GameOfLife : MonoBehaviour
     // Sets up the algorithm of choice
     public RuleOfNeighbour m_ruleOfNeighbour;
     #endregion
-
+    // Handle the game of life simulation
     void Update()
     {
         if (m_play)
@@ -62,13 +62,14 @@ public class GameOfLife : MonoBehaviour
         SimulationStep();
 
     }
-
+    // always check neighboors of all grid and then update the status if needed
     private void SimulationStep()
     {
-        countNeighbours();
-        updateCellMesh();
+        CountNeighbours();
+        UpdateCellMesh();
     }
 
+    // synchronises the "visible" cells on the invible bigger grid ton endure in-game click & algorithm change
     public void SynchronizeGridsOnVisibleOne()
     {
         for (int i = 0; i < GridManager.Instance.m_grid.GetLength(0); i++)
@@ -79,6 +80,8 @@ public class GameOfLife : MonoBehaviour
             }
         }
     }
+
+    // Sets up the differents options of algorithms for ui Dropdown
     public List<string> GetOptions()
     {
         List<string> optionList = new List<string>();
@@ -87,6 +90,7 @@ public class GameOfLife : MonoBehaviour
         optionList.Add("Infinite");
         return optionList;
     }
+
 
     public void ChangeAlgo(string algo)
     {
@@ -101,8 +105,6 @@ public class GameOfLife : MonoBehaviour
         {
             m_ruleOfNeighbour = RuleOfNeighbour.Infinite;
         }
-        Debug.Log(algo);
-        Debug.Log(m_ruleOfNeighbour);
     }
 
     public void Quit()
@@ -110,8 +112,9 @@ public class GameOfLife : MonoBehaviour
         Application.Quit();
     }
 
-    private void countNeighbours()
+    private void CountNeighbours()
     {
+        // syncronize the visible part and then handle the neighboors of the bigger grid to look infinite
         if (m_ruleOfNeighbour == RuleOfNeighbour.Infinite)
         {
             SynchronizeGridsOnVisibleOne();
@@ -130,6 +133,7 @@ public class GameOfLife : MonoBehaviour
                 for (int j = 0; j < GridManager.Instance.m_grid.GetLength(1); j++)
                 {
                     int n = 0;
+                    // handles similar algorythm change
                     if (m_ruleOfNeighbour == RuleOfNeighbour.Closed)
                     {
                         n = CountNeighborsCloseGrid(i, j);
@@ -148,7 +152,7 @@ public class GameOfLife : MonoBehaviour
         
     }
 
-    private void updateCellMesh()
+    private void UpdateCellMesh()
     {
        
         if (m_ruleOfNeighbour != RuleOfNeighbour.Infinite)
@@ -158,8 +162,8 @@ public class GameOfLife : MonoBehaviour
                 for (int j = 0; j < GridManager.Instance.m_grid.GetLength(1); j++)
                 {
                     var cell = GridManager.Instance.m_grid[i, j];
-                    changeMesh(cell);
-                    copyOnBiggerGrid(i, j, cell.m_IsAlive);
+                    // apply the game of life neighboor rule
+                    ChangeMesh(cell);
                 }
             }
         } else
@@ -168,21 +172,24 @@ public class GameOfLife : MonoBehaviour
             {
                 for (int j = 0; j < BiggerGrid.GetLength(1); j++)
                 {
-                    updateBigGrid(i, j);
+                    // apply the game of life neighboor rule to bigger grid
+                    UpdateBigGrid(i, j);
                 }
             }
             for (int i = 0; i < GridManager.Instance.m_grid.GetLength(0); i++)
             {
                 for (int j = 0; j < GridManager.Instance.m_grid.GetLength(1); j++)
                 {
+                    // apply results on visible grid
                     var cell = GridManager.Instance.m_grid[i, j];
-                    updateCellOnBiggerGrid(i, j, cell);
+                    UpdateCellOnBiggerGrid(i, j, cell);
                 }
             }
         }
     }
 
-    private void updateBigGrid(int col, int row)
+    // game of life rule for bigger grid (infinite mode)
+    private void UpdateBigGrid(int col, int row)
     {
         if (BiggerGrid[col, row].m_Neighbors == 3)
         { 
@@ -193,13 +200,8 @@ public class GameOfLife : MonoBehaviour
             BiggerGrid[col, row].m_IsAlive = false;
         }
     }
-
-    private void copyOnBiggerGrid(int col, int row, bool isAlive)
-    {
-        LightCell lightCell = BiggerGrid[col + GridManager.Instance.m_BiggerGridPadding, row + GridManager.Instance.m_BiggerGridPadding];
-        lightCell.m_IsAlive = isAlive;
-    }
     
+    // counts the limits of grids as dead but is bigger than visible grid => gives inpression of infinity
     private int CountNeighborsBiggerGrid(int col, int row)
     {
         int n = 0;
@@ -221,6 +223,7 @@ public class GameOfLife : MonoBehaviour
         return n;
     }
 
+    // counts the limits of grid as dead cell
     private int CountNeighborsCloseGrid(int col, int row)
     {
         int n = 0;
@@ -242,6 +245,7 @@ public class GameOfLife : MonoBehaviour
         return n;
     }
 
+    // joins with modulo opposite borders of grid to make glider run infinitely on screen for example
     private int CountNeighborsSymetricalGrid(int col, int row)
     {
         int n = 0;
@@ -264,7 +268,8 @@ public class GameOfLife : MonoBehaviour
         return n;
     }
 
-    private void changeMesh(Cell cell)
+    // applies on non infinite algorithm rule of the game & mesh changes if necessary
+    private void ChangeMesh(Cell cell)
     {
         var meshRenderer = cell.GetComponentInChildren<MeshRenderer>();
         
@@ -282,7 +287,8 @@ public class GameOfLife : MonoBehaviour
         }
     }
     
-    private void updateCellOnBiggerGrid(int col, int row, Cell cell)
+    // applis mesh and status change on cell based on bigger grid
+    private void UpdateCellOnBiggerGrid(int col, int row, Cell cell)
     {
         var meshRenderer = cell.GetComponentInChildren<MeshRenderer>();
         var bigGridCell = BiggerGrid[col + GridManager.Instance.m_BiggerGridPadding, row + GridManager.Instance.m_BiggerGridPadding];
@@ -297,5 +303,6 @@ public class GameOfLife : MonoBehaviour
 
     #region Private
     private float _counter;
+    // feeling quite lonely in this private area
     #endregion
 }

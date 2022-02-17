@@ -9,6 +9,7 @@ public class Cell : MonoBehaviour
 
 }
 
+// lighter cell without inheritance for transparent bigger map
 public class LightCell
 {
     public int m_Neighbors = 0;
