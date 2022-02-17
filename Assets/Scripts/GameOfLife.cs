@@ -79,6 +79,29 @@ public class GameOfLife : MonoBehaviour
             }
         }
     }
+    public List<string> GetOptions()
+    {
+        List<string> optionList = new List<string>();
+        optionList.Add("Closed");
+        optionList.Add("Symetrical");
+        optionList.Add("Infinite");
+        return optionList;
+    }
+
+    public void ChangeAlgo(string algo)
+    {
+        if (algo == "Closed")
+        {
+            m_ruleOfNeighbour = RuleOfNeighbour.Closed;
+        } else if(algo == "Symetrical")
+        {
+            m_ruleOfNeighbour = RuleOfNeighbour.Symetrical;
+        }
+        else
+        {
+            m_ruleOfNeighbour = RuleOfNeighbour.Infinite;
+        }
+    }
 
     private void countNeighbours()
     {

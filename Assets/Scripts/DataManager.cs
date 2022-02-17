@@ -7,6 +7,15 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
+    private void Start()
+    {
+        string filePath = Application.persistentDataPath + "/Grids";
+        DirectoryInfo info = new DirectoryInfo(filePath);
+        if (!info.Exists)
+        {
+            info.Create();
+        }
+    }
 
     private string SetData()
     {
@@ -49,6 +58,11 @@ public class DataManager : MonoBehaviour
     public async Task LoadJson(string name)
     {
         string filePath = Application.persistentDataPath + "/Grids";
+        DirectoryInfo info = new DirectoryInfo(filePath);
+        if (!info.Exists)
+        {
+            info.Create();
+        }
         string path = Path.Combine(filePath, $"{name}.json");
         using var sourceStream =
         new FileStream(
@@ -73,9 +87,10 @@ public class DataManager : MonoBehaviour
                 Destroy(cell.gameObject);
             }
         }
-        GridManager.Instance.m_grid = new Cell[grid.m_cols, grid.m_rows];
-        GridManager.Instance.ChangeCols(grid.m_cols);
-        GridManager.Instance.ChangeRows(grid.m_rows);
+        //GridManager.Instance.m_grid = new Cell[grid.m_cols, grid.m_rows];
+        //GridManager.Instance.ChangeCols(grid.m_cols);
+        //GridManager.Instance.ChangeRows(grid.m_rows);
+        GridManager.Instance.SetNewGridWithSize(grid.m_cols, grid.m_rows);
         UIManager.UIM.ChangeCols(grid.m_cols);
         UIManager.UIM.ChangeRows(grid.m_rows);
         GridManager.Instance.UpdateCamera();
@@ -151,9 +166,10 @@ public class DataManager : MonoBehaviour
                 Destroy(cell.gameObject);
             }
         }
-        GridManager.Instance.m_grid = new Cell[tex.width, tex.height];
-        GridManager.Instance.ChangeCols(tex.width);
-        GridManager.Instance.ChangeRows(tex.height);
+        //GridManager.Instance.m_grid = new Cell[tex.width, tex.height];
+        //GridManager.Instance.ChangeCols(tex.width);
+        //GridManager.Instance.ChangeRows(tex.height);
+        GridManager.Instance.SetNewGridWithSize(tex.width, tex.height);
         UIManager.UIM.ChangeCols(tex.width);
         UIManager.UIM.ChangeRows(tex.height);
         GridManager.Instance.UpdateCamera();
@@ -176,7 +192,9 @@ public class DataManager : MonoBehaviour
 
     public List<string> GetJson()
     {
+        
         string path = Application.persistentDataPath + "/Grids";
+       
         string [] files = Directory.GetFiles(path, "*.json*");
         List<string> f = new List<string>();
         f.Add("Select Json");
@@ -191,6 +209,7 @@ public class DataManager : MonoBehaviour
     public List<string> GetPng()
     {
         string path = Application.persistentDataPath + "/Grids";
+        
         string [] files = Directory.GetFiles(path, "*.png*");
         List<string> f = new List<string>();
         f.Add("Select Png");

@@ -16,10 +16,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Dropdown _jsonDropdown;
     [SerializeField] private TMP_Dropdown _pngDropdown;
     [SerializeField] private TMP_InputField _fileName;
+    [SerializeField] private TMP_Dropdown _gridDropdown;
+    private string _algoName;
     private string _jsonName;
     private string _pngName;
     public DataManager dataManager;
     public GridManager gridManager;
+    public GameOfLife gameOfLife;
 
     public static UIManager UIM;
     private void Awake()
@@ -77,11 +80,22 @@ public class UIManager : MonoBehaviour
         await dataManager.LoadPng(_pngName);
     }
 
+    public void ChangeAlgo()
+    {
+        gameOfLife.ChangeAlgo(_algoName);
+    }
+
     public void GetJson()
     {
         List<string> files = dataManager.GetJson();
         _jsonDropdown.ClearOptions();
         _jsonDropdown.AddOptions(files);
+    }
+    public void GetOptions()
+    {
+        List<string> options = gameOfLife.GetOptions();
+        _gridDropdown.ClearOptions();
+        _gridDropdown.AddOptions(options);
     }
 
     public void GetPng()
