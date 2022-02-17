@@ -17,7 +17,7 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    private string SetData()
+    private Grid SetData()
     {
         Grid getClassData  = new Grid();
         getClassData.m_name = name;
@@ -33,14 +33,22 @@ public class DataManager : MonoBehaviour
                 indexTracker++;
             }
         }
-        return JsonUtility.ToJson(getClassData);
+        return getClassData;
     }
 
     public async Task SaveToJson(string name)
     {
-        string json = SetData(); ;
+        Grid gridData = SetData();
+        string json = null;
+        byte[] encodedText = null;
         string filePath = Application.persistentDataPath + "/Grids";
-        byte[] encodedText = Encoding.UTF8.GetBytes(json);
+        Task jsonEncoded = Task.Run(() =>
+        {
+           json = JsonUtility.ToJson(gridData);
+           encodedText = Encoding.UTF8.GetBytes(json);
+        });
+        await Task.WhenAll(jsonEncoded);
+        
         DirectoryInfo info = new DirectoryInfo(filePath);
         if (!info.Exists)
         {
@@ -69,15 +77,21 @@ public class DataManager : MonoBehaviour
             path,
             FileMode.Open, FileAccess.Read, FileShare.Read,
             bufferSize: 4096, useAsync: true);
+        
         var sb = new StringBuilder();
-
         byte[] buffer = new byte[0x1000];
         int numRead;
-        while ((numRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+        string text = null;
+        Task byteConversion = Task.Run(async () =>
         {
-            string text = Encoding.UTF8.GetString(buffer, 0, numRead);
-            sb.Append(text);
-        }
+            while ((numRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+            {
+                text = Encoding.UTF8.GetString(buffer, 0, numRead);
+                sb.Append(text);
+            }
+        });
+        await Task.WhenAll(byteConversion);
+        
         Grid grid = JsonUtility.FromJson<Grid>(sb.ToString());
         
         if (GridManager.Instance.m_grid != null)
@@ -151,14 +165,18 @@ public class DataManager : MonoBehaviour
         string filePath = Application.persistentDataPath + "/Grids";
         string path = Path.Combine(filePath, $"{name}.png");
         Texture2D tex = new Texture2D(2,2);
+
         byte[] buffer = new byte[4096];
+
         using (FileStream sourceStream = new FileStream(path,
-            FileMode.Open, FileAccess.Read, FileShare.Read,
-            bufferSize: 4096, useAsync: true))
+        FileMode.Open, FileAccess.Read, FileShare.Read,
+        bufferSize: 4096, useAsync: true))
         {
             await sourceStream.ReadAsync(buffer, 0, buffer.Length);
             tex.LoadImage(buffer);
         };
+
+
         if (GridManager.Instance.m_grid != null)
         {
             foreach (var cell in GridManager.Instance.m_grid)

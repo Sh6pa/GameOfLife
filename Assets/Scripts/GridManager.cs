@@ -63,7 +63,7 @@ public class GridManager : MonoBehaviour
                 Destroy(cell.gameObject);
             }
         }
-        SetNewGrid();        
+        SetNewGrid();
         UpdateCamera();
     }
 
