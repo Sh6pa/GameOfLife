@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Dropdown _pngDropdown;
     [SerializeField] private TMP_InputField _fileName;
     [SerializeField] private TMP_Dropdown _gridDropdown;
-    private string _algoName;
+    private string _algoName = "Closed";
     private string _jsonName;
     private string _pngName;
     public DataManager dataManager;
@@ -45,6 +45,7 @@ public class UIManager : MonoBehaviour
         ChangeSpeed(_speedSlider.value);
         GetPng();
         GetJson();
+        GetOptions();
     }
     public void ChangeRows(float value)
     {
@@ -112,6 +113,11 @@ public class UIManager : MonoBehaviour
     public void UpdatePngName()
     {
         _pngName = _pngDropdown.options[_pngDropdown.value].text.Substring(0, _pngDropdown.options[_pngDropdown.value].text.Length-4);
+    }
+
+    public void UpdateAlgoName()
+    {
+        _algoName = _gridDropdown.options[_gridDropdown.value].text.Substring(0, _gridDropdown.options[_gridDropdown.value].text.Length);
     }
 
 }

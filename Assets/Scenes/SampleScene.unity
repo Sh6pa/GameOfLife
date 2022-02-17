@@ -3905,7 +3905,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Algo
+  m_text: ' Update algo'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4668,7 +4668,7 @@ GameObject:
   - component: {fileID: 1204301168}
   - component: {fileID: 1204301167}
   m_Layer: 5
-  m_Name: LoadPngDropdown
+  m_Name: AlgoDropdown
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4753,7 +4753,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1722240292}
         m_TargetAssemblyTypeName: UIManager, Assembly-CSharp
-        m_MethodName: GetOptions
+        m_MethodName: UpdateAlgoName
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

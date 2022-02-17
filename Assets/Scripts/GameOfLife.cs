@@ -101,6 +101,8 @@ public class GameOfLife : MonoBehaviour
         {
             m_ruleOfNeighbour = RuleOfNeighbour.Infinite;
         }
+        Debug.Log(algo);
+        Debug.Log(m_ruleOfNeighbour);
     }
 
     private void countNeighbours()
@@ -114,7 +116,6 @@ public class GameOfLife : MonoBehaviour
                 {
                     int n = CountNeighborsBiggerGrid(i, j);
                     BiggerGrid[i, j].m_Neighbors = n;
-                    Debug.Log($"cell {i}/{j} : {BiggerGrid[i, j].m_IsAlive} ");
                 }
             }
         } else
